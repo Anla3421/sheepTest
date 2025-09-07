@@ -1,4 +1,4 @@
-package main
+package sheepfunc
 
 import (
 	"fmt"
@@ -8,47 +8,50 @@ import (
 	"sort"
 )
 
-const totalSpins = 100000
+// const totalSpins = 100000
 
-var limit = 3
-var luckySlot = &[]string{}
+var limit = 99
 
-func main() {
-	fmt.Printf("init luckySlot: %+v\n", luckySlot)
-	gameBoard := SheepAreaInit()
-	PrintBoard(gameBoard, "init")
+// var luckySlot = &[]string{}
 
-	for i := 0; i < totalSpins; i++ {
-		// fmt.Printf("!!!新的一局開始了!!! init luckySlot: %+v\n", luckySlot)
-		// luckySlot := []string{"一萬", "兩萬", "五萬"}
-		// needToCheck := SpinResult()
-		needToCheck := NewSpinResult()
-		// fmt.Println("!!!這次的連線的符號!!!", needToCheck.Symbol)
-		Compare(gameBoard, luckySlot, needToCheck.Symbol)
-		// 現有盤面確認，如果盤面清空了(len()=0)，獲得JP (這邊先用迴圈中止處理)
-		if JackpotCheck(gameBoard) {
-			log.Println("!!!!!JP", i)
-			// PrintBoard(gameBoard, "finish")
-			// log.Panicf("!!!!!JP finish luckySlot: %+v\n", luckySlot)
-			break
-		}
-	}
-	// log.Println("!!!!!no JP!!!!")
-	// PrintBoard(gameBoard, "finish")
-	// fmt.Printf("finish luckySlot: %+v\n", luckySlot)
-}
+// func main() {
+// 	fmt.Printf("init luckySlot: %+v\n", luckySlot)
+// 	gameBoard := SheepAreaInit()
+// 	PrintBoard(gameBoard, "init")
+
+// 	for i := 0; i < totalSpins; i++ {
+// 		// fmt.Printf("!!!新的一局開始了!!! init luckySlot: %+v\n", luckySlot)
+// 		// luckySlot := []string{"一萬", "兩萬", "五萬"}
+// 		// needToCheck := SpinResult()
+// 		needToCheck := NewSpinResult()
+// 		// fmt.Println("!!!這次的連線的符號!!!", needToCheck.Symbol)
+// 		Compare(gameBoard, luckySlot, needToCheck.Symbol)
+// 		// 現有盤面確認，如果盤面清空了(len()=0)，獲得JP (這邊先用迴圈中止處理)
+// 		if JackpotCheck(gameBoard) {
+// 			log.Println("!!!!!JP", i)
+// 			// PrintBoard(gameBoard, "finish")
+// 			// log.Panicf("!!!!!JP finish luckySlot: %+v\n", luckySlot)
+// 			break
+// 		}
+// 	}
+// 	// log.Println("!!!!!no JP!!!!")
+// 	// PrintBoard(gameBoard, "finish")
+// 	// fmt.Printf("finish luckySlot: %+v\n", luckySlot)
+// }
 
 // 配合 BG 實際觸發羊的方程式，
-func SheepTrigger(Symbol string, gameBoard map[int]*Tile, luckySlot *[]string) {
+func SheepTrigger(Symbol string, gameBoard map[int]*Tile, luckySlot *[]string) (int, map[int]*Tile) {
 	// 繼續開發
 	Compare(gameBoard, luckySlot, Symbol)
 	if JackpotCheck(gameBoard) {
 		PrintBoard(gameBoard, "finish")
 		gameBoard = SheepAreaInit()
 		log.Println("!!!!!JP")
-		PrintBoard(gameBoard, "refreash")
+		PrintBoard(gameBoard, "refresh")
 		// log.Panicf("!!!!!JP finish luckySlot: %+v\n", luckySlot)
+		return 5, gameBoard // lv1 盤面清除的獎勵
 	}
+	return 0, gameBoard
 }
 
 // Add 新增項目到容器的方法
@@ -219,7 +222,7 @@ func Intermission(gameBoard map[int]*Tile, luckySlot *[]string) {
 			}
 			// 如果 luckyshot 數量不足 1 就不執行
 			if len(indexNeedToCut) < 2 {
-				PrintBoard(gameBoard, "indexNeedToCut")
+				// PrintBoard(gameBoard, "indexNeedToCut")
 				break
 			}
 			for _, t := range markToErease {
